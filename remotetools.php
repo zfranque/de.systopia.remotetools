@@ -1,15 +1,31 @@
 <?php
+/*-------------------------------------------------------+
+| SYSTOPIA Remote Tools                                  |
+| Copyright (C) 2020 SYSTOPIA                            |
+| Author: B. Endres (endres@systopia.de)                 |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++--------------------------------------------------------*/
+
 
 require_once 'remotetools.civix.php';
+
 use CRM_Remotetools_ExtensionUtil as E;
 
 /**
  * Implements hook_civicrm_config().
  *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/ 
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
  */
-function remotetools_civicrm_config(&$config) {
-  _remotetools_civix_civicrm_config($config);
+function remotetools_civicrm_config(&$config)
+{
+    _remotetools_civix_civicrm_config($config);
 }
 
 /**
@@ -17,8 +33,9 @@ function remotetools_civicrm_config(&$config) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_xmlMenu
  */
-function remotetools_civicrm_xmlMenu(&$files) {
-  _remotetools_civix_civicrm_xmlMenu($files);
+function remotetools_civicrm_xmlMenu(&$files)
+{
+    _remotetools_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -26,8 +43,9 @@ function remotetools_civicrm_xmlMenu(&$files) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
  */
-function remotetools_civicrm_install() {
-  _remotetools_civix_civicrm_install();
+function remotetools_civicrm_install()
+{
+    _remotetools_civix_civicrm_install();
 }
 
 /**
@@ -35,8 +53,9 @@ function remotetools_civicrm_install() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
  */
-function remotetools_civicrm_postInstall() {
-  _remotetools_civix_civicrm_postInstall();
+function remotetools_civicrm_postInstall()
+{
+    _remotetools_civix_civicrm_postInstall();
 }
 
 /**
@@ -44,8 +63,9 @@ function remotetools_civicrm_postInstall() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_uninstall
  */
-function remotetools_civicrm_uninstall() {
-  _remotetools_civix_civicrm_uninstall();
+function remotetools_civicrm_uninstall()
+{
+    _remotetools_civix_civicrm_uninstall();
 }
 
 /**
@@ -53,8 +73,9 @@ function remotetools_civicrm_uninstall() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
  */
-function remotetools_civicrm_enable() {
-  _remotetools_civix_civicrm_enable();
+function remotetools_civicrm_enable()
+{
+    _remotetools_civix_civicrm_enable();
 }
 
 /**
@@ -62,8 +83,9 @@ function remotetools_civicrm_enable() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_disable
  */
-function remotetools_civicrm_disable() {
-  _remotetools_civix_civicrm_disable();
+function remotetools_civicrm_disable()
+{
+    _remotetools_civix_civicrm_disable();
 }
 
 /**
@@ -71,8 +93,9 @@ function remotetools_civicrm_disable() {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
  */
-function remotetools_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _remotetools_civix_civicrm_upgrade($op, $queue);
+function remotetools_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
+{
+    return _remotetools_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -83,8 +106,9 @@ function remotetools_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
  */
-function remotetools_civicrm_managed(&$entities) {
-  _remotetools_civix_civicrm_managed($entities);
+function remotetools_civicrm_managed(&$entities)
+{
+    _remotetools_civix_civicrm_managed($entities);
 }
 
 /**
@@ -96,8 +120,9 @@ function remotetools_civicrm_managed(&$entities) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
  */
-function remotetools_civicrm_caseTypes(&$caseTypes) {
-  _remotetools_civix_civicrm_caseTypes($caseTypes);
+function remotetools_civicrm_caseTypes(&$caseTypes)
+{
+    _remotetools_civix_civicrm_caseTypes($caseTypes);
 }
 
 /**
@@ -110,8 +135,9 @@ function remotetools_civicrm_caseTypes(&$caseTypes) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
  */
-function remotetools_civicrm_angularModules(&$angularModules) {
-  _remotetools_civix_civicrm_angularModules($angularModules);
+function remotetools_civicrm_angularModules(&$angularModules)
+{
+    _remotetools_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -119,8 +145,9 @@ function remotetools_civicrm_angularModules(&$angularModules) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_alterSettingsFolders
  */
-function remotetools_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _remotetools_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function remotetools_civicrm_alterSettingsFolders(&$metaDataFolders = null)
+{
+    _remotetools_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -130,15 +157,17 @@ function remotetools_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
  */
-function remotetools_civicrm_entityTypes(&$entityTypes) {
-  _remotetools_civix_civicrm_entityTypes($entityTypes);
+function remotetools_civicrm_entityTypes(&$entityTypes)
+{
+    _remotetools_civix_civicrm_entityTypes($entityTypes);
 }
 
 /**
  * Implements hook_civicrm_thems().
  */
-function remotetools_civicrm_themes(&$themes) {
-  _remotetools_civix_civicrm_themes($themes);
+function remotetools_civicrm_themes(&$themes)
+{
+    _remotetools_civix_civicrm_themes($themes);
 }
 
 // --- Functions below this ship commented out. Uncomment as required. ---
@@ -148,23 +177,23 @@ function remotetools_civicrm_themes(&$themes) {
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
  *
-function remotetools_civicrm_preProcess($formName, &$form) {
-
-} // */
+ * function remotetools_civicrm_preProcess($formName, &$form) {
+ *
+ * } // */
 
 /**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
  *
-function remotetools_civicrm_navigationMenu(&$menu) {
-  _remotetools_civix_insert_navigation_menu($menu, 'Mailings', array(
-    'label' => E::ts('New subliminal message'),
-    'name' => 'mailing_subliminal_message',
-    'url' => 'civicrm/mailing/subliminal',
-    'permission' => 'access CiviMail',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _remotetools_civix_navigationMenu($menu);
-} // */
+ * function remotetools_civicrm_navigationMenu(&$menu) {
+ * _remotetools_civix_insert_navigation_menu($menu, 'Mailings', array(
+ * 'label' => E::ts('New subliminal message'),
+ * 'name' => 'mailing_subliminal_message',
+ * 'url' => 'civicrm/mailing/subliminal',
+ * 'permission' => 'access CiviMail',
+ * 'operator' => 'OR',
+ * 'separator' => 0,
+ * ));
+ * _remotetools_civix_navigationMenu($menu);
+ * } // */
