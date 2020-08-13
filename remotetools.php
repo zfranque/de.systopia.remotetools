@@ -170,30 +170,19 @@ function remotetools_civicrm_themes(&$themes)
     _remotetools_civix_civicrm_themes($themes);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+/**
+ * Define custom (Drupal) permissions
+ */
+function remotetools_civicrm_permission(&$permissions) {
+    $permissions['match remote contacts'] = E::ts('RemoteContacts: match and link');
+    $permissions['retrieve remote contacts'] = E::ts('RemoteContacts: retrieve');
+}
+
 
 /**
- * Implements hook_civicrm_preProcess().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
- *
- * function remotetools_civicrm_preProcess($formName, &$form) {
- *
- * } // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- *
- * function remotetools_civicrm_navigationMenu(&$menu) {
- * _remotetools_civix_insert_navigation_menu($menu, 'Mailings', array(
- * 'label' => E::ts('New subliminal message'),
- * 'name' => 'mailing_subliminal_message',
- * 'url' => 'civicrm/mailing/subliminal',
- * 'permission' => 'access CiviMail',
- * 'operator' => 'OR',
- * 'separator' => 0,
- * ));
- * _remotetools_civix_navigationMenu($menu);
- * } // */
+ * Set permissions RemoteEvent API
+ */
+function remotetools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+    $permissions['remote_contact']['match'] = ['match remote contacts'];
+    $permissions['remote_contact']['get_roles'] = ['retrieve remote contacts'];
+}
