@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/admin/remotetools</path>
+    <page_callback>CRM_Remotetools_Form_Settings</page_callback>
+    <title>Remote Tools Settings</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+    <desc>Configuration for the RemoteTools features</desc>
+    <adminGroup>System Settings</adminGroup>
+    <icon>admin/duplicate_matching.png</icon>
+  </item>
+</menu>

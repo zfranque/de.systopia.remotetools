@@ -61,19 +61,42 @@ class CRM_Remotetools_Contact {
      * @throws Exception if the contact could not be matched or created
      */
     public static function match($data, $prefix = '') {
-        // TODO: check if ID generation enabled
+        // check if matching is enabled
+        if (!Civi::settings()->get('remotecontact_matching_enabled')) {
+            throw new Exception("RemoteContact matching is disabled");
+        }
+
+        // also see, if the creation of new contacts is disabled
+        $contact_creation_disabled = !Civi::settings()->get('remotecontact_matching_creates_contacts_enabled');
 
         // sanitise data
         unset($data['xcm_profile'], $data['contact_id'], $data['id']);
         $data['check_permissions'] = 0;
 
-        // TODO: load xcm_profile
+        // add XCM profile
+        $data['xcm_profile'] = Civi::settings()->get('remotecontact_matching_profile');
+
+        // make sure we don't create contacts
+        if ($contact_creation_disabled) {
+            $transaction = new CRM_Core_Transaction();
+            $last_contact_id = CRM_Core_DAO::singleValueQuery("SELECT MAX(id) FROM civicrm_contact;");
+        }
 
         // run XCM to find contact
         $result = civicrm_api3('Contact', 'getorcreate', $data);
         $contact_id = $result['id'];
         if (empty($contact_id)) {
+            $transaction->rollback();
             throw new Exception(E::ts("Couldn't identify contact"));
+        }
+
+        // make sure we haven't created a contact
+        if ($contact_creation_disabled) {
+            if ($contact_id > $last_contact_id) {
+                // there was a new contact created! we don't want that
+                $transaction->rollback();
+                throw new Exception(E::ts("Contact not found/doesn't exist, and contact creation is disabled. Sorry."));
+            }
         }
 
         // contact found: generate key
