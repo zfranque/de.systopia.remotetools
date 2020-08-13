@@ -109,6 +109,9 @@ class CRM_Remotetools_Contact {
         // store new key
         self::storeRemoteKey($new_key, $contact_id);
 
+        // add the role
+        CRM_Remotetools_ContactRoles::addRoles($contact_id, ['remote-user']);
+
         // and return
         return $new_key;
     }

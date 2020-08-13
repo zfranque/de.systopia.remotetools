@@ -18,56 +18,72 @@ use CRM_Remotetools_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Remotetools_Upgrader extends CRM_Remotetools_Upgrader_Base {
+class CRM_Remotetools_Upgrader extends CRM_Remotetools_Upgrader_Base
+{
 
-  /**
-   * During installation, add the 'Remote Contact' type
-   *  to the identity tracker
-   */
-  public function install()
-  {
-      // check if an entry already exists
-      $exists_count = civicrm_api3(
-          'OptionValue',
-          'getcount',
-          [
-              'option_group_id' => 'contact_id_history_type',
-              'value'           => 'remote_contact'
-          ]
-      );
-      switch ($exists_count) {
-          case 0:
-              // not there -> create
-              civicrm_api3(
-                  'OptionValue',
-                  'create',
-                  [
-                      'option_group_id' => 'contact_id_history_type',
-                      'value'           => 'remote_contact',
-                      'is_reserved'     => 1,
-                      'description'     => E::ts(
-                          "Used by the RemoteTools extension to map CiviCRM contacts to remote users oder contacts."
-                      ),
-                      'name'            => 'remote_contact',
-                      'label'           => E::ts("Remote Contact")
-                  ]
-              );
-              break;
+    /**
+     * During installation, add the 'Remote Contact' type
+     *  to the identity tracker
+     */
+    public function install()
+    {
+        // check if an entry already exists
+        $exists_count = civicrm_api3(
+            'OptionValue',
+            'getcount',
+            [
+                'option_group_id' => 'contact_id_history_type',
+                'value'           => 'remote_contact'
+            ]
+        );
+        switch ($exists_count) {
+            case 0:
+                // not there -> create
+                civicrm_api3(
+                    'OptionValue',
+                    'create',
+                    [
+                        'option_group_id' => 'contact_id_history_type',
+                        'value'           => 'remote_contact',
+                        'is_reserved'     => 1,
+                        'description'     => E::ts(
+                            "Used by the RemoteTools extension to map CiviCRM contacts to remote users oder contacts."
+                        ),
+                        'name'            => 'remote_contact',
+                        'label'           => E::ts("Remote Contact")
+                    ]
+                );
+                break;
 
-          case 1:
-              // does exist, nothing to do here
-              break;
+            case 1:
+                // does exist, nothing to do here
+                break;
 
-          default:
-              // more than one exists: that's not good!
-              CRM_Core_Session::setStatus(
-                  E::ts(
-                      "Multiple identiy types 'remote_contact' contact exist in IdentityTracker's types! Please fix!"
-                  ),
-                  E::ts("Warning"),
-                  'warn'
-              );
-              break;
-      }
-  }
+            default:
+                // more than one exists: that's not good!
+                CRM_Core_Session::setStatus(
+                    E::ts(
+                        "Multiple identiy types 'remote_contact' contact exist in IdentityTracker's types! Please fix!"
+                    ),
+                    E::ts("Warning"),
+                    'warn'
+                );
+                break;
+        }
+    }
+
+    /**
+     * Adding roles
+     *
+     * @return TRUE on success
+     * @throws Exception
+     */
+    public function upgrade_0001()
+    {
+        $this->ctx->log->info('Adding remote roles.');
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_contact_data.json'));
+        return true;
+    }
 }
