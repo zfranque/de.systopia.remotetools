@@ -22,12 +22,16 @@ class CRM_Remotetools_Upgrader extends CRM_Remotetools_Upgrader_Base
 {
 
     /**
-     * During installation, add the 'Remote Contact' type
-     *  to the identity tracker
+     * Installation procedure
      */
     public function install()
     {
-        // check if an entry already exists
+        // create custom data structures
+        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
+        $customData->syncCustomGroup(E::path('resources/custom_group_remote_contact_data.json'));
+
+        // also: add the 'Remote Contact' type to the identity tracker
         $exists_count = civicrm_api3(
             'OptionValue',
             'getcount',
