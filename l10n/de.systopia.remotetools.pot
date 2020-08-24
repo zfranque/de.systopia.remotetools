@@ -1,0 +1,122 @@
+# Copyright CiviCRM LLC (c) 2004-2015
+# This file is distributed under the same license as the CiviCRM package.
+# If you contribute heavily to a translation and deem your work copyrightable,
+# make sure you license it to CiviCRM LLC under Academic Free License 3.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: de.systopia.remotetools\n"
+"POT-Creation-Date: 2020-08-24 11:23+0200\n"
+"Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: CRM/Remotetools/Contact.php
+msgid "Couldn't identify contact"
+msgstr ""
+
+#: CRM/Remotetools/Contact.php
+msgid ""
+"Contact not found/doesn't exist, and contact creation is disabled. Sorry."
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "RemoteTools Configuration"
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "Remote Contact Matching Enabled"
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "Remote Contact Matching Creates New Contacts"
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "Remote Contact Matching Profile"
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "Save"
+msgstr ""
+
+#: CRM/Remotetools/Form/Settings.php
+msgid "CiviRemote Configuration Updated"
+msgstr ""
+
+#: CRM/Remotetools/Upgrader/Base.php
+msgid "Upgrade %1 to revision %2"
+msgstr ""
+
+#: CRM/Remotetools/Upgrader.php
+msgid ""
+"Used by the RemoteTools extension to map CiviCRM contacts to remote users "
+"oder contacts."
+msgstr ""
+
+#: CRM/Remotetools/Upgrader.php
+msgid "Remote Contact"
+msgstr ""
+
+#: CRM/Remotetools/Upgrader.php
+msgid ""
+"Multiple identiy types 'remote_contact' contact exist in IdentityTracker's "
+"types! Please fix!"
+msgstr ""
+
+#: CRM/Remotetools/Upgrader.php
+msgid "Warning"
+msgstr ""
+
+#: api/v3/RemoteContact/GetRoles.php
+msgid "Remote Contact ID"
+msgstr ""
+
+#: api/v3/RemoteContact/GetRoles.php
+msgid ""
+"Use the key that you were given by RemoteContact.match to access this "
+"contact's roles"
+msgstr ""
+
+#: api/v3/RemoteContact/GetRoles.php
+msgid "A contact with this key is not registered."
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "Key Prefix (optional)"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid ""
+"You can use a prefix to be added to the generated ID, so you can later "
+"identify where the ID came from. The value (up to 8 chars) can be A-Z, 0-9, "
+"_-#"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "Contact Type"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "First Name"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "Last Name"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "Email"
+msgstr ""
+
+#: api/v3/RemoteContact/Match.php
+msgid "Phone"
+msgstr ""
+
+#: remotetools.php
+msgid "RemoteContacts: match and link"
+msgstr ""
+
+#: remotetools.php
+msgid "RemoteContacts: retrieve"
+msgstr ""
