@@ -176,6 +176,7 @@ function remotetools_civicrm_themes(&$themes)
 function remotetools_civicrm_permission(&$permissions) {
     $permissions['match remote contacts'] = E::ts('RemoteContacts: match and link');
     $permissions['retrieve remote contact information'] = E::ts('RemoteContacts: retrieve');
+    $permissions['update remote contact information'] = E::ts('RemoteContacts: update');
 }
 
 
@@ -186,4 +187,5 @@ function remotetools_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_contact']['match']     = ['match remote contacts'];
     $permissions['remote_contact']['get_roles'] = ['retrieve remote contact information'];
     $permissions['remote_contact']['get']       = ['retrieve remote contact information'];
+    $permissions['remote_contact']['update']    = ['update remote contact information'];
 }
