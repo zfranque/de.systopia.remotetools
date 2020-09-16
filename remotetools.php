@@ -183,6 +183,7 @@ function remotetools_civicrm_permission(&$permissions) {
  * Set permissions RemoteEvent API
  */
 function remotetools_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
-    $permissions['remote_contact']['match'] = ['match remote contacts'];
+    $permissions['remote_contact']['match']     = ['match remote contacts'];
     $permissions['remote_contact']['get_roles'] = ['retrieve remote contact information'];
+    $permissions['remote_contact']['get']       = ['retrieve remote contact information'];
 }
