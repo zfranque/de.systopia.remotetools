@@ -54,6 +54,14 @@ function civicrm_api3_remote_contact_get($params)
     unset($params['remote_contact_id']);
     $params['id'] = $contact_id;
 
-    // and return a simple Contact.get
-    return civicrm_api3('Contact', 'get', $params);
+    // and execute a simple Contact.get
+    $result = civicrm_api3('Contact', 'get', $params);
+
+    // label custom fields
+    foreach ($result['values'] as &$contact_data) {
+        CRM_Remotetools_CustomData::labelCustomFields($contact_data);
+    }
+
+    // ..and return
+    return $result;
 }
