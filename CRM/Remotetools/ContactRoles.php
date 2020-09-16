@@ -38,6 +38,23 @@ class CRM_Remotetools_ContactRoles
     }
 
     /**
+     * Check if the given contact has the
+     *
+     * @param integer $contact_id
+     *   (internal) contact ID
+     * @param string $role_name
+     *   the role to check for
+     *
+     * @return boolean
+     *  roles list [[name => label]]
+     */
+    public static function hasRole($contact_id, $role_name)
+    {
+        $roles = self::getRoles($contact_id);
+        return isset($roles[$role_name]);
+    }
+
+    /**
      * Get a list of RemoteContact roles
      *
      * @param integer $contact_id
