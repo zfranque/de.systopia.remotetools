@@ -34,7 +34,7 @@ class CRM_Remotetools_SecureToken {
      */
     public static function generateToken($payload, $hash_key)
     {
-        $encoded_raw_payload = base64_encode(serialize($payload));
+        $encoded_raw_payload = base64_encode(json_encode($payload));
         $signature = sha1($encoded_raw_payload . $hash_key);
         return "{$encoded_raw_payload}-{$signature}";
     }
@@ -82,7 +82,7 @@ class CRM_Remotetools_SecureToken {
     public static function decodeEntityToken($entity_name, $token)
     {
         list($encoded_raw_payload, $signature) = explode('-', $token, 2);
-        $payload = unserialize(base64_decode($encoded_raw_payload));
+        $payload = json_decode(base64_decode($encoded_raw_payload), 1);
 
         // verify payload
         if (!is_array($payload) || count($payload) != 3) {
