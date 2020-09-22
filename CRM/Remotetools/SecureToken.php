@@ -21,6 +21,8 @@ use CRM_Remotetools_ExtensionUtil as E;
  */
 class CRM_Remotetools_SecureToken {
 
+    const SIGNATURE_LENGTH = 32;
+
     /**
      * Generic token generation with payload
      *
@@ -35,12 +37,20 @@ class CRM_Remotetools_SecureToken {
     public static function generateToken($payload, $hash_key)
     {
         $encoded_raw_payload = base64_encode(json_encode($payload));
-        $signature = sha1($encoded_raw_payload . $hash_key);
+        $signature = substr(hash('sha512', $encoded_raw_payload . $hash_key), 0, self::SIGNATURE_LENGTH);
         return "{$encoded_raw_payload}-{$signature}";
     }
 
     /**
      * Generate a token for a given entity ID
+     *  The payload generated will be
+     *   [
+     *       0 first character of entity name,
+     *       1 entity_id,
+     *       2 expires date or '0',
+     *       3 usage indicator,
+     *       4 salt,
+     *   ]
      *
      * @param string $entity_name
      *   CiviCRM entity (must be supported)
@@ -50,15 +60,25 @@ class CRM_Remotetools_SecureToken {
      *
      * @param string $expires
      *   strtotime()-readable timestamp
+     *
+     * @param string $usage
+     *   what should this token be used for
      */
-    public static function generateEntityToken($entity_name, $entity_id, $expires = null) {
+    public static function generateEntityToken($entity_name, $entity_id, $expires = null, $usage = null) {
         // build the payload
         if (empty($expires)) {
             $expires = 0;
         } else {
             $expires = strtotime($expires);
         }
-        $payload = [strtoupper(substr($entity_name, 0, 2)), $entity_id, $expires];
+        if (empty($usage)) {
+            $usage = '';
+        }
+
+        // add salt
+        $salt = base64_encode(random_bytes(8));
+
+        $payload = [strtoupper(substr($entity_name, 0, 2)), $entity_id, $expires, $usage, $salt];
 
         // get the contact hash
         $hash = self::getContactHash($entity_name, $entity_id);
@@ -76,16 +96,19 @@ class CRM_Remotetools_SecureToken {
      * @param string $token
      *   the token received
      *
+     * @param string $usage
+     *   what should this token be used for
+     *
      * @return null|integer
      *   return the entity ID if the token is valid and has not expired
      */
-    public static function decodeEntityToken($entity_name, $token)
+    public static function decodeEntityToken($entity_name, $token, $usage = null)
     {
         list($encoded_raw_payload, $signature) = explode('-', $token, 2);
         $payload = json_decode(base64_decode($encoded_raw_payload), 1);
 
         // verify payload
-        if (!is_array($payload) || count($payload) != 3) {
+        if (!is_array($payload) || count($payload) != 5) {
             // this is not what we're expecting
             return null;
         }
@@ -93,6 +116,14 @@ class CRM_Remotetools_SecureToken {
         // verify entity
         if (strtoupper(substr($entity_name, 0, 2)) != $payload[0]) {
             // we were expecting the initial of the entity, this seems like a mismatch
+            return null;
+        }
+
+        // verify usage
+        if (empty($usage)) {
+            $usage = '';
+        }
+        if ($usage != $payload[3]) {
             return null;
         }
 
@@ -131,7 +162,7 @@ class CRM_Remotetools_SecureToken {
     public static function verifySignature($token, $hash_key)
     {
         list($encoded_raw_payload, $signature) = explode('-', $token, 2);
-        $expected_signature =  sha1($encoded_raw_payload . $hash_key);
+        $expected_signature = substr(hash('sha512', $encoded_raw_payload . $hash_key), 0, self::SIGNATURE_LENGTH);
         return $signature == $expected_signature;
     }
 
