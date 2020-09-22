@@ -27,7 +27,7 @@ class CRM_Remotetools_Upgrader extends CRM_Remotetools_Upgrader_Base
     public function install()
     {
         // create custom data structures
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData = new CRM_Remotetools_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_contact_data.json'));
 
@@ -85,7 +85,7 @@ class CRM_Remotetools_Upgrader extends CRM_Remotetools_Upgrader_Base
     public function upgrade_0001()
     {
         $this->ctx->log->info('Adding remote roles.');
-        $customData = new CRM_Remoteevent_CustomData(E::LONG_NAME);
+        $customData = new CRM_Remotetools_CustomData(E::LONG_NAME);
         $customData->syncOptionGroup(E::path('resources/option_group_remote_contact_roles.json'));
         $customData->syncCustomGroup(E::path('resources/custom_group_remote_contact_data.json'));
         return true;
