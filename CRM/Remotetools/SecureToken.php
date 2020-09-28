@@ -63,6 +63,12 @@ class CRM_Remotetools_SecureToken {
      *
      * @param string $usage
      *   what should this token be used for
+     *
+     * @return string
+     *   hash token
+     *
+     * @throws \Exception
+     *   if the related contact does not exist, is deleted, or has no proper 32 character hash
      */
     public static function generateEntityToken($entity_name, $entity_id, $expires = null, $usage = null) {
         // build the payload
@@ -82,6 +88,10 @@ class CRM_Remotetools_SecureToken {
 
         // get the contact hash
         $hash = self::getContactHash($entity_name, $entity_id);
+
+        if (empty($hash) || strlen($hash) < 32) {
+            throw new Exception(E::ts("Couldn't generate token, related contact might be deleted or has no proper hash"));
+        }
 
         // generate the token
         return self::generateToken($payload, $hash);
@@ -186,6 +196,10 @@ class CRM_Remotetools_SecureToken {
         }
 
         // now that we have the contact ID, we can get the hash
-        return CRM_Core_DAO::singleValueQuery("SELECT hash FROM civicrm_contact WHERE id = {$contact_id}");
+        return CRM_Core_DAO::singleValueQuery("
+            SELECT hash 
+            FROM civicrm_contact 
+            WHERE id = {$contact_id} 
+            AND (is_deleted = NULL OR is_deleted = 0)");
     }
 }
