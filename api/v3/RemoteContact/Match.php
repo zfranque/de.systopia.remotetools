@@ -73,6 +73,7 @@ function _civicrm_api3_remote_contact_match_spec(&$spec)
  */
 function civicrm_api3_remote_contact_match($params)
 {
+    unset($params['check_permissions']);
     $null = null;
 
     try {

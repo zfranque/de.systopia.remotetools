@@ -44,6 +44,8 @@ function _civicrm_api3_remote_contact_update_spec(&$spec)
  */
 function civicrm_api3_remote_contact_update($params)
 {
+    unset($params['check_permissions']);
+
     // identify contact
     $contact_id = CRM_Remotetools_Contact::getByKey($params['remote_contact_id']);
     if (empty($contact_id)) {
