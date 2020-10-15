@@ -52,7 +52,7 @@ class CRM_Remotetools_SeparatorApiWrapper implements API_Wrapper
     {
         if ($this->internal_separator != $this->external_separator) {
             if ($this->isExternal()) {
-
+                $this->mapSeparators($result, $this->external_separator, $this->internal_separator);
             }
         }
         return $apiRequest;
@@ -65,7 +65,7 @@ class CRM_Remotetools_SeparatorApiWrapper implements API_Wrapper
     public function toApiOutput($apiRequest, $result) {
         if ($this->internal_separator != $this->external_separator) {
             if ($this->isExternal()) {
-                $this->mapSeparators($result, )
+                $this->mapSeparators($result, $this->internal_separator, $this->external_separator);
             }
         }
         return $result;
