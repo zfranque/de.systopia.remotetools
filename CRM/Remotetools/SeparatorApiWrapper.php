@@ -52,7 +52,9 @@ class CRM_Remotetools_SeparatorApiWrapper implements API_Wrapper
     {
         if ($this->internal_separator != $this->external_separator) {
             if ($this->isExternal()) {
-                $this->mapSeparators($result, $this->external_separator, $this->internal_separator);
+                $data = $apiRequest['params'];
+                $this->mapSeparators($data, $this->external_separator, $this->internal_separator);
+                $apiRequest['params'] = $data;
             }
         }
         return $apiRequest;
@@ -110,6 +112,7 @@ class CRM_Remotetools_SeparatorApiWrapper implements API_Wrapper
      */
     protected function isExternal()
     {
+        // TODO: can be traced to REST?
         return true;
     }
 }
