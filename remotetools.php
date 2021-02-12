@@ -17,7 +17,7 @@
 require_once 'remotetools.civix.php';
 
 use CRM_Remotetools_ExtensionUtil as E;
-
+use Civi\RemoteContact\RemoteContactGetRequest as RemoteContactGetRequest;
 /**
  * Implements hook_civicrm_config().
  *
@@ -26,6 +26,26 @@ use CRM_Remotetools_ExtensionUtil as E;
 function remotetools_civicrm_config(&$config)
 {
     _remotetools_civix_civicrm_config($config);
+
+    // register events (with our own wrapper to avoid duplicate registrations)
+    $dispatcher = new \Civi\RemoteToolsDispatcher();
+
+    // EVENT REMOTECONTAT GETPROFILES
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.getprofiles',
+        ['CRM_Remotetools_RemoteContactProfile', 'registerKnownProfiles']);
+
+    // EVENT REMOTECONTACT GET
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.get',
+        ['RemoteContactGetRequest', 'addProfileRequirements', RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST]);
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.get',
+        ['RemoteContactGetRequest', 'executeRequest', RemoteContactGetRequest::EXECUTE_REQUEST]);
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.get',
+        ['RemoteContactGetRequest', 'applyProfileValueFormatting', RemoteContactGetRequest::AFTER_EXECUTE_REQUEST]);
+
 }
 
 /**
