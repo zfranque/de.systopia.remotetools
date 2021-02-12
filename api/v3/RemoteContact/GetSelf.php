@@ -22,7 +22,7 @@ use CRM_Remotetools_ExtensionUtil as E;
  * @param array $spec
  *   API specification blob
  */
-function _civicrm_api3_remote_contact_get_spec(&$spec)
+function _civicrm_api3_remote_contact_get_self_spec(&$spec)
 {
     $spec['remote_contact_id'] = [
         'name'         => 'remote_contact_id',
@@ -42,7 +42,7 @@ function _civicrm_api3_remote_contact_get_spec(&$spec)
  * @return array
  *   API3 response
  */
-function civicrm_api3_remote_contact_get($params)
+function civicrm_api3_remote_contact_get_self($params)
 {
     unset($params['check_permissions']);
 
