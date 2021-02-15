@@ -14,13 +14,15 @@
 +--------------------------------------------------------*/
 
 use CRM_Remotetools_ExtensionUtil as E;
+use Civi\RemoteContact\GetFieldsEvent;
 
 /**
  * This is a very simple contact profile:
  *   - only containing first and last name fields/
  *   - only returns the contact identified by the remote_contact_id
  */
-class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remotetools_RemoteContactProfile {
+class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remotetools_RemoteContactProfile
+{
 
     /**
      * Get the list of fields to be returned.
@@ -59,13 +61,40 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
      */
     public function filterResult($request, &$reply_records)
     {
-        foreach (array_keys($reply_records) as $index)
-        {
+        foreach (array_keys($reply_records) as $index) {
             $reply_records[$index] = [
-                'id'         => CRM_Utils_Array::value('id', $reply_records[$index], ''),
+                'id' => CRM_Utils_Array::value('id', $reply_records[$index], ''),
                 'first_name' => CRM_Utils_Array::value('first_name', $reply_records[$index], ''),
-                'last_name'  => CRM_Utils_Array::value('last_name', $reply_records[$index], ''),
+                'last_name' => CRM_Utils_Array::value('last_name', $reply_records[$index], ''),
             ];
         }
     }
+
+    /**
+     * Add the profile's fields to the fields collection
+     *
+     * @param $fields_collection GetFieldsEvent
+     */
+    public function addFields($fields_collection)
+    {
+        $fields_collection->setFieldSpec('first_name',
+            [
+                'name' => 'first_name',
+                'type' => CRM_Utils_Type::T_STRING,
+                'title' => E::ts("First Name"),
+                'localizable' => 0,
+                'is_core_field' => true,
+            ]
+        );
+        $fields_collection->setFieldSpec('last_name',
+            [
+                'name' => 'last_name',
+                'type' => CRM_Utils_Type::T_STRING,
+                'title' => E::ts("Last Name"),
+                'localizable' => 0,
+                'is_core_field' => true,
+            ]
+        );
+    }
+
 }

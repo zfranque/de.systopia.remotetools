@@ -35,6 +35,11 @@ function remotetools_civicrm_config(&$config)
         'civi.remotecontact.getprofiles',
         ['CRM_Remotetools_RemoteContactProfile', 'registerKnownProfiles']);
 
+    // EVENT REMOTECONTACT GETFIELDS
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.getfields',
+        ['Civi\RemoteContact\GetFieldsEvent', 'addProfileFields'], RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST);
+
     // EVENT REMOTECONTACT GET
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',
@@ -194,8 +199,10 @@ function remotetools_civicrm_themes(&$themes)
  * Define custom (Drupal) permissions
  */
 function remotetools_civicrm_permission(&$permissions) {
+    // remote contacts
     $permissions['match remote contacts'] = E::ts('RemoteContacts: match and link');
     $permissions['retrieve remote contact information'] = E::ts('RemoteContacts: retrieve');
+    $permissions['retrieve own contact information'] = E::ts('RemoteContacts: retrieve self');
     $permissions['update remote contact information'] = E::ts('RemoteContacts: update');
 }
 
@@ -207,5 +214,6 @@ function remotetools_civicrm_alterAPIPermissions($entity, $action, &$params, &$p
     $permissions['remote_contact']['match']     = ['match remote contacts'];
     $permissions['remote_contact']['get_roles'] = ['retrieve remote contact information'];
     $permissions['remote_contact']['get']       = ['retrieve remote contact information'];
+    $permissions['remote_contact']['get_self']  = ['retrieve own contact information'];
     $permissions['remote_contact']['update']    = ['update remote contact information'];
 }
