@@ -28,13 +28,12 @@ abstract class CRM_Remotetools_RemoteContactProfile {
      * Get the list of fields to be returned.
      *  This is meant to be overwritten by the profile
      *
-     * @param $return_field_list
-     *
-     * @return mixed
+     * @return array
      */
-    public function getReturnFields($return_field_list)
+    public function getReturnFields()
     {
-        // override this to apply any restrictions (e.g. contact attributes/IDs) to the request
+        // get the list of fields this profile wants/needs
+        return [];
     }
 
     /**
@@ -53,9 +52,13 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     /**
      * This is a point where the profile can re-format the results
      *
-     * @param array $result_data
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     * @param array $reply_records
+     *    the current reply records to edit in-place
      */
-    public function formatResult(&$result_data)
+    public function filterResult($request, &$reply_records)
     {
         // implement this to format the results before delivery
     }
@@ -107,7 +110,7 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     public static function registerKnownProfiles($profiles)
     {
         $known_profiles = [
-            'simple_first_name_last_name' => 'CRM_Remotetools_RemoteContactProfile_FirstNameLastName'
+            'simple_first_name_last_name' => 'CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName'
         ];
 
         foreach ($known_profiles as $name => $class) {

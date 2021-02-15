@@ -18,7 +18,6 @@ namespace Civi\RemoteContact;
 
 use Civi\RemoteToolsRequest;
 use Civi\Setup\PackageUtil;
-use Dompdf\Exception;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -61,26 +60,19 @@ class RemoteContactGetRequest extends RemoteToolsRequest
     public static function addProfileRequirements($request)
     {
         $profile = $request->getProfile();
-        $request_data = $request->getRequest();
+        $request_data = &$request->getRequest();
 
         // impose the profile ID restriction
-        $profile->applyIdRestrictions($request_data);
+        $profile->applyRestrictions($request_data);
 
         // update the 'return' fields
-        $return_fields = $request->getReturnFields();
-        $request_data['return'] = array_unique(array_merge($return_fields, $profile->getReturnFields()));
-    }
-
-    /**
-     * Apply profile
-     *
-     * @param $request RemoteContactGetRequest
-     *   the request to execute
-     */
-    public static function applyProfileValueFormatting($request)
-    {
-        $profile = $request->getProfile();
-        $profile->formatResult($request->result);
+        $current_return_fields = $request->getReturnFields();
+        $profile_return_fields = $profile->getReturnFields();
+        if ($current_return_fields === null) {
+            $request_data['return'] = $profile_return_fields;
+        } else {
+            $request_data['return'] = array_unique(array_merge($return_fields, $profile_return_fields));
+        }
     }
 
 
@@ -93,15 +85,27 @@ class RemoteContactGetRequest extends RemoteToolsRequest
     public static function executeRequest($request)
     {
         if (!$request->hasErrors()) {
-            $request = $request->getRequest();
             try {
                 $request->result = false; // mark es being executed
-                $request->result = \civicrm_api3('Contact', 'get', $request);
-                $request->reply = [];
+                $request_data = $request->getRequest();
+                $request->result = \civicrm_api3('Contact', 'get', $request_data);
+                $request->reply = $request->result; // set default reply to result
             } catch (Exception $ex) {
                 $request->addError($ex->getMessage());
             }
         }
+    }
+
+    /**
+     * Apply profile filters
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     */
+    public static function filterResult($request)
+    {
+        $profile = $request->getProfile();
+        $profile->filterResult($request, $request->getReply()['values']);
     }
 
 }

@@ -26,12 +26,11 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
      * Get the list of fields to be returned.
      *  This is meant to be overwritten by the profile
      *
-     * @param $return_field_list
-     *
-     * @return mixed
+     * @return array
      */
-    public function getReturnFields($return_field_list)
+    public function getReturnFields()
     {
+        // get the list of fields this profile wants/needs
         return ['first_name', 'last_name'];
     }
 
@@ -52,16 +51,20 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
     /**
      * This is a point where the profile can re-format the results
      *
-     * @param array $result_data
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     * @param array $reply_records
+     *    the current reply records to edit in-place
      */
-    public function formatResult(&$result_data)
+    public function filterResult($request, &$reply_records)
     {
-        foreach (array_keys($result_data) as $index)
+        foreach (array_keys($reply_records) as $index)
         {
-            $result_data[$index] = [
-                'id'         => CRM_Utils_Array::value('id', $result_data[$index], ''),
-                'first_name' => CRM_Utils_Array::value('first_name', $result_data[$index], ''),
-                'last_name'  => CRM_Utils_Array::value('last_name', $result_data[$index], ''),
+            $reply_records[$index] = [
+                'id'         => CRM_Utils_Array::value('id', $reply_records[$index], ''),
+                'first_name' => CRM_Utils_Array::value('first_name', $reply_records[$index], ''),
+                'last_name'  => CRM_Utils_Array::value('last_name', $reply_records[$index], ''),
             ];
         }
     }

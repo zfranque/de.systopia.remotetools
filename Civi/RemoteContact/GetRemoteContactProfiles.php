@@ -68,9 +68,9 @@ class GetRemoteContactProfiles extends RemoteToolsRequest
      * Add a remote contact profile instance to the list
      * @param \Civi\RemoteContact\CRM_Remotetools_RemoteContactProfile $instance
      */
-    public function addInstance(CRM_Remotetools_RemoteContactProfile $instance)
+    public function addInstance($instance)
     {
-        if ($instance instanceof CRM_Remotetools_RemoteContactProfile) {
+        if ($instance instanceof \CRM_Remotetools_RemoteContactProfile) {
             $this->profile_instances[] = $instance;
         } else {
             throw new \Exception("Provided instance not of class CRM_Remotetools_RemoteContactProfile");

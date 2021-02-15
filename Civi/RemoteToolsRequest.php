@@ -297,7 +297,7 @@ class RemoteToolsRequest extends Event
 
         // compile standard result
         static $null = null;
-        return civicrm_api3_create_success($this->reply, [], $entity, $action, $null, $extraReturnValues);
+        return civicrm_api3_create_success($this->reply['values'], [], $entity, $action, $null, $extraReturnValues);
     }
 
     /**

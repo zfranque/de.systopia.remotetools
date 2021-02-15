@@ -38,13 +38,13 @@ function remotetools_civicrm_config(&$config)
     // EVENT REMOTECONTACT GET
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',
-        ['RemoteContactGetRequest', 'addProfileRequirements', RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST]);
+        ['Civi\RemoteContact\RemoteContactGetRequest', 'addProfileRequirements'], RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST);
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',
-        ['RemoteContactGetRequest', 'executeRequest', RemoteContactGetRequest::EXECUTE_REQUEST]);
+        ['Civi\RemoteContact\RemoteContactGetRequest', 'executeRequest'], RemoteContactGetRequest::EXECUTE_REQUEST);
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',
-        ['RemoteContactGetRequest', 'applyProfileValueFormatting', RemoteContactGetRequest::AFTER_EXECUTE_REQUEST]);
+        ['Civi\RemoteContact\RemoteContactGetRequest', 'filterResult'], RemoteContactGetRequest::AFTER_EXECUTE_REQUEST);
 
 }
 
