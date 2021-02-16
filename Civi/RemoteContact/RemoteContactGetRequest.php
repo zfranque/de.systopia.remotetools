@@ -34,6 +34,28 @@ class RemoteContactGetRequest extends RemoteToolsRequest
      */
     protected $profile = null;
 
+    /** @var bool is this a RemoteContact.get_self request to view your own data? */
+    protected $is_self_request = false;
+
+    /**
+     * Is this a request about one's own data?
+     */
+    public function isSelfRequest()
+    {
+        return $this->is_self_request;
+    }
+
+    /**
+     * Set the 'self-request' flag
+     *
+     * @param $is_self_request boolean
+     *
+     */
+    public function setSelfRequest($is_self_request)
+    {
+        $this->is_self_request = $is_self_request;
+    }
+
     /**
      * Get the profile to be used in this request
      *
@@ -43,13 +65,23 @@ class RemoteContactGetRequest extends RemoteToolsRequest
     {
         if ($this->profile === null) {
             $profile_name = $this->getRequestParameter('profile');
-            $this->profile = \CRM_Remotetools_RemoteContactProfile::getProfileByName($profile_name);
-            if (!$this->profile) {
-                $this->addError("Profile {$profile_name} not valid");
+            if (empty($profile_name)) {
+                // remark: if you want to add a default profile, you need to hook in before this method is called
+                $this->addError("A profile needs to be provided by caller or by code.");
+            } else {
+                $this->profile = \CRM_Remotetools_RemoteContactProfile::getProfileByName($profile_name);
+                if (!$this->profile) {
+                    $this->addError("Profile {$profile_name} not valid");
+                }
             }
         }
         return $this->profile;
     }
+
+
+    /******************************************************************************
+     *                            EXECUTION                                       *
+     ******************************************************************************/
 
     /**
      * Add the requirements the profile needs
@@ -59,19 +91,24 @@ class RemoteContactGetRequest extends RemoteToolsRequest
      */
     public static function addProfileRequirements($request)
     {
-        $profile = $request->getProfile();
-        $request_data = &$request->getRequest();
+        if (!$request->hasErrors()) {
+            $profile = $request->getProfile();
+            if ($profile) {
+                $request_data = &$request->getRequest();
 
-        // impose the profile ID restriction
-        $profile->applyRestrictions($request_data);
+                // impose the profile ID restriction
+                $profile->applyRestrictions($request_data);
 
-        // update the 'return' fields
-        $current_return_fields = $request->getReturnFields();
-        $profile_return_fields = $profile->getReturnFields();
-        if ($current_return_fields === null) {
-            $request_data['return'] = $profile_return_fields;
-        } else {
-            $request_data['return'] = array_unique(array_merge($return_fields, $profile_return_fields));
+                // update the 'return' fields
+                $current_return_fields = $request->getReturnFields();
+                $profile_return_fields = $profile->getReturnFields();
+                if (empty($current_return_fields)) {
+                    $request_data['return'] = $profile_return_fields;
+                } else {
+                    // todo: use array_intersect? what logic to we want here?
+                    $request_data['return'] = array_unique(array_merge($return_fields, $profile_return_fields));
+                }
+            }
         }
     }
 
@@ -86,10 +123,19 @@ class RemoteContactGetRequest extends RemoteToolsRequest
     {
         if (!$request->hasErrors()) {
             try {
-                $request->result = false; // mark es being executed
-                $request_data = $request->getRequest();
-                $request->result = \civicrm_api3('Contact', 'get', $request_data);
-                $request->reply = $request->result; // set default reply to result
+                // only execute if there is a profile
+                $profile = $request->getProfile();
+                if (!$profile) {
+                    $request->addError(E::ts("Date profile not found"));
+
+                } else {
+                    // finally execute
+                    $request->result = false; // mark es being executed
+                    $request_data = $request->getRequest();
+                    $request->result = \civicrm_api3('Contact', 'get', $request_data);
+                    $request->reply = $request->result; // set default reply to result
+                }
+
             } catch (Exception $ex) {
                 $request->addError($ex->getMessage());
             }
@@ -104,8 +150,12 @@ class RemoteContactGetRequest extends RemoteToolsRequest
      */
     public static function filterResult($request)
     {
-        $profile = $request->getProfile();
-        $profile->filterResult($request, $request->getReply()['values']);
+        if (!$request->hasErrors()) {
+            $profile = $request->getProfile();
+            if ($profile) {
+                $profile->filterResult($request, $request->getReply()['values']);
+            }
+        }
     }
 
 }

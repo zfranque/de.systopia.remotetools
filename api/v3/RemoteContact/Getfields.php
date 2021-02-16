@@ -26,7 +26,7 @@ function civicrm_api3_remote_contact_getfields($params) {
     unset($params['check_permissions']);
 
     // we only support 'get' actions
-    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'getsingle') {
+    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'get_self') {
         return civicrm_api3('Contact', 'getfields', $params);
     }
 
@@ -34,6 +34,24 @@ function civicrm_api3_remote_contact_getfields($params) {
     $fields_collection = new GetFieldsEvent($params);
 
     // add some selected fields
+    $fields_collection->setFieldSpec('remote_contact_id', [
+        'name'          => 'remote_contact_id',
+        'title'         => E::ts("Remote Contact Identification"),
+        'description'   => E::ts("Use the key that you were given by RemoteContact.match to access this contact's roles"),
+        'type'          => CRM_Utils_Type::T_STRING,
+        'localizable'   => 0,
+        'is_core_field' => false,
+        'is_required'   => (strtolower($params['action']) == 'get_self')
+    ]);
+    $fields_collection->setFieldSpec('profile', [
+        'name'          => 'profile',
+        'title'         => E::ts("Remote Contact Data Profile"),
+        'description'   => E::ts('Defines the data you will be receiving. If omitted, the system will try to assign the a profile'),
+        'type'          => CRM_Utils_Type::T_STRING,
+        'localizable'   => 0,
+        'is_core_field' => false,
+        'is_required'   => false,
+    ]);
     $fields_collection->setFieldSpec('contact_type', [
         'name'          => 'contact_type',
         'type'          => CRM_Utils_Type::T_STRING,

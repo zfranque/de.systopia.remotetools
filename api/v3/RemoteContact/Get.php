@@ -18,28 +18,6 @@ use CRM_Remotetools_ExtensionUtil as E;
 use Civi\RemoteContact\RemoteContactGetRequest;
 
 /**
- * RemoteContact.get specs
- *
- * @param array $spec
- *   API specification blob
- */
-function _civicrm_api3_remote_contact_get_spec(&$spec)
-{
-    $spec['profile']           = [
-        'name'         => 'profile',
-        'api.required' => 1,
-        'title'        => E::ts('Profile Name'),
-        'description'  => E::ts('If omitted, the default profile is used'),
-    ];
-    $spec['remote_contact_id'] = [
-        'name'         => 'remote_contact_id',
-        'title'        => E::ts('Remote Contact ID'),
-        'api.required' => 0,
-        'description'  => E::ts("Use the key that you were given by RemoteContact.match to access this contact's roles"),
-    ];
-}
-
-/**
  * RemoteContact.get implementation,
  *  analogous to Contact.get, but requiring the remote_contact_id parameter
  *
@@ -55,6 +33,7 @@ function civicrm_api3_remote_contact_get($params)
 
     // create Symfony execution event
     $request = new RemoteContactGetRequest($params);
+
     Civi::dispatcher()->dispatch('civi.remotecontact.get', $request);
 
     if ($request->hasErrors()) {

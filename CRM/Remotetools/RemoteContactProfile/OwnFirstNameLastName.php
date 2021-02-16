@@ -63,9 +63,9 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
     {
         foreach (array_keys($reply_records) as $index) {
             $reply_records[$index] = [
-                'id' => CRM_Utils_Array::value('id', $reply_records[$index], ''),
+                'civicrm_id' => CRM_Utils_Array::value('id', $reply_records[$index], ''),
                 'first_name' => CRM_Utils_Array::value('first_name', $reply_records[$index], ''),
-                'last_name' => CRM_Utils_Array::value('last_name', $reply_records[$index], ''),
+                'last_name'  => CRM_Utils_Array::value('last_name', $reply_records[$index], ''),
             ];
         }
     }
@@ -77,6 +77,15 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
      */
     public function addFields($fields_collection)
     {
+        $fields_collection->setFieldSpec('civicrm_id',
+             [
+                 'name' => 'civicrm_id',
+                 'type' => CRM_Utils_Type::T_STRING,
+                 'title' => E::ts("CiviCRM ID"),
+                 'localizable' => 0,
+                 'is_core_field' => true,
+             ]
+        );
         $fields_collection->setFieldSpec('first_name',
             [
                 'name' => 'first_name',
