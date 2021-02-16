@@ -57,6 +57,9 @@ class RemoteToolsRequest extends Event
     /** @var array holds the list of info/status messages */
     protected $info_list = [];
 
+    /** @var integer the contact ID of the caller */
+    protected $caller_contact_id = null;
+
     /**
      * Create RemoteToolsRequest with the original query
      *
@@ -69,6 +72,41 @@ class RemoteToolsRequest extends Event
 
         // clear return parameter
         $this->request['return'] = '';
+    }
+
+
+    /**
+     * Get the contact_id of the caller
+     *
+     * @return int
+     *   a contact ID, 0 (zero) if not found/identified
+     */
+    public function getCallerContactID()
+    {
+        if (!isset($this->caller_contact_id)) {
+            if (empty($this->getRequest()['remote_contact_id'])) {
+                $this->caller_contact_id = 0; // no ID given
+            } else {
+                $contact_id = \CRM_Remotetools_Contact::getByKey($this->getRequest()['remote_contact_id']);
+                if ($contact_id) {
+                    $this->caller_contact_id = $contact_id;
+                } else {
+                    $this->caller_contact_id = 0; // contact not found
+                }
+            }
+        }
+
+        return $this->caller_contact_id;
+    }
+
+    /**
+     * Set/override the contact ID of the caller
+     *
+     * @param integer $contact_id
+     */
+    public function setCallerContactID($contact_id)
+    {
+        $this->caller_contact_id = $contact_id;
     }
 
     /**
