@@ -43,6 +43,12 @@ function remotetools_civicrm_config(&$config)
     // EVENT REMOTECONTACT GET
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',
+        ['Civi\RemoteContact\RemoteContactGetRequest', 'initProfile'], RemoteContactGetRequest::INITIALISATION);
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.get',
+        ['Civi\RemoteContact\RemoteContactGetRequest', 'addProfileRequirements'], RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST);
+    $dispatcher->addUniqueListener(
+        'civi.remotecontact.get',
         ['Civi\RemoteContact\RemoteContactGetRequest', 'addProfileRequirements'], RemoteContactGetRequest::BEFORE_EXECUTE_REQUEST);
     $dispatcher->addUniqueListener(
         'civi.remotecontact.get',

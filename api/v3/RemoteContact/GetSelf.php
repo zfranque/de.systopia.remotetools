@@ -64,6 +64,7 @@ function civicrm_api3_remote_contact_get_self($params)
         }
         $reply_data['values'] = [];
         unset($reply_data['count']);
+        unset($reply_data['id']);
     }
 
     if ($request->hasErrors()) {

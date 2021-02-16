@@ -26,12 +26,38 @@ use Civi\RemoteToolsDispatcher;
 abstract class CRM_Remotetools_RemoteContactProfile {
 
     /**
+     * Add the profile's fields to the fields collection
+     *
+     * @param $fields_collection GetFieldsEvent
+     */
+    public function addFields($fields_collection)
+    {
+        // implement this to add your fields
+    }
+
+    /**
+     * Initialise the profile. This is a good place to do some sanity checks
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     */
+    public function initProfile($request)
+    {
+        // implement this to format the results before delivery
+    }
+
+
+    /**
      * Get the list of fields to be returned.
      *  This is meant to be overwritten by the profile
      *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
      * @return array
      */
-    public function getReturnFields()
+    public function getReturnFields($request)
     {
         // get the list of fields this profile wants/needs
         return [];
@@ -41,13 +67,16 @@ abstract class CRM_Remotetools_RemoteContactProfile {
      * If the profile wants to restrict any fields
      *  This is meant to be overwritten by the profile
      *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+
      * @param array $request_data
+     *    the request parameters, to be edited in place
      *
-     * @return mixed
      */
-    public function applyRestrictions(&$request_data)
+    public function applyRestrictions($request, &$request_data)
     {
-        // implememt this to apply any restrictions (e.g. contact attributes/IDs) to the request
+        // implement this to apply any restrictions (e.g. contact attributes/IDs) to the request
     }
 
     /**
@@ -64,19 +93,9 @@ abstract class CRM_Remotetools_RemoteContactProfile {
         // implement this to format the results before delivery
     }
 
-    /**
-     * Add the profile's fields to the fields collection
-     *
-     * @param $fields_collection GetFieldsEvent
-     */
-    public function addFields($fields_collection)
-    {
-
-    }
-
-
-
-
+    /*************************************************************************
+     ***                 PROFILE ADMIN FUNCTIONS                           ***
+     *************************************************************************/
 
     /**
      * Get all registered profiles
@@ -99,6 +118,9 @@ abstract class CRM_Remotetools_RemoteContactProfile {
      * Get a registered profile instance by name
      *
      * @param string $profile_name
+     *
+     * @return \CRM_Remotetools_RemoteContactProfile|null
+     *   the profile
      */
     public static function getProfileByName($profile_name)
     {
@@ -108,6 +130,8 @@ abstract class CRM_Remotetools_RemoteContactProfile {
 
         // return the first match (if any)
         return $profile_search->getFirstInstance();
+
+        // todo: warn, if multiple instances?
     }
 
 
@@ -119,7 +143,7 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     public static function registerKnownProfiles($profiles)
     {
         $known_profiles = [
-            'simple_first_name_last_name' => 'CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName'
+//            'simple_first_name_last_name' => 'CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName'
         ];
 
         foreach ($known_profiles as $name => $class) {

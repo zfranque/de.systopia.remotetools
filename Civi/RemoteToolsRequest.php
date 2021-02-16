@@ -28,6 +28,10 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class RemoteToolsRequest extends Event
 {
+    const BEFORE_INITIALISATION     = 2250;
+    const INITIALISATION            = 2000;
+    const AFTER_INITIALISATION      = 1750;
+
     const BEFORE_EXECUTE_REQUEST    = 500;
     const EXECUTE_REQUEST           = 0;
     const AFTER_EXECUTE_REQUEST     = -500;

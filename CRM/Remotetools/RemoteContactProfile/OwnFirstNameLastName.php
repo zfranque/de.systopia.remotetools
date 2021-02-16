@@ -15,22 +15,40 @@
 
 use CRM_Remotetools_ExtensionUtil as E;
 use Civi\RemoteContact\GetFieldsEvent;
+use Civi\RemoteContact\RemoteContactGetRequest;
 
 /**
- * This is a very simple contact profile:
+ * EXAMPLE: a very simple contact profile:
  *   - only containing first and last name fields/
  *   - only returns the contact identified by the remote_contact_id
+ *
+ * to try, uncomment in CRM_Remotetools_RemoteContactProfile::registerKnownProfiles
  */
 class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remotetools_RemoteContactProfile
 {
 
     /**
+     * Initialise the profile. This is a good place to do some sanity checks
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     */
+    public function initProfile($request)
+    {
+        // implement this to format the results before delivery
+    }
+
+    /**
      * Get the list of fields to be returned.
      *  This is meant to be overwritten by the profile
      *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
      * @return array
      */
-    public function getReturnFields()
+    public function getReturnFields($request)
     {
         // get the list of fields this profile wants/needs
         return ['first_name', 'last_name'];
@@ -40,11 +58,14 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
      * If the profile wants to restrict any fields
      *  This is meant to be overwritten by the profile
      *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+
      * @param array $request_data
+     *    the request parameters, to be edited in place
      *
-     * @return mixed
      */
-    public function applyRestrictions(&$request_data)
+    public function applyRestrictions($request, &$request_data)
     {
         $request_data['contact_type'] = 'Individual';
         $request_data['sequential'] = 0;

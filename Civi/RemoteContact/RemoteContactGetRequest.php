@@ -16,9 +16,8 @@
 
 namespace Civi\RemoteContact;
 
+use CRM_Remotetools_ExtensionUtil as E;
 use Civi\RemoteToolsRequest;
-use Civi\Setup\PackageUtil;
-use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Event to collect all CRM_Remotetools_RemoteContactProfile implementations
@@ -26,8 +25,8 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class RemoteContactGetRequest extends RemoteToolsRequest
 {
-    const BEFORE_ADD_PROFILE_DATA   = RemoteToolsRequest::EXECUTE_REQUEST + 1250;
-    const ADD_PROFILE_DATA          = RemoteToolsRequest::EXECUTE_REQUEST + 1000;
+    const BEFORE_ADD_PROFILE_DATA   = RemoteToolsRequest::EXECUTE_REQUEST + 300;
+    const ADD_PROFILE_DATA          = RemoteToolsRequest::EXECUTE_REQUEST + 250;
 
     /**
      * @var \CRM_Remotetools_RemoteContactProfile the profile to be used
@@ -84,6 +83,22 @@ class RemoteContactGetRequest extends RemoteToolsRequest
      ******************************************************************************/
 
     /**
+     * Make sure the profile is present
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     */
+    public static function initProfile($request)
+    {
+        if (!$request->hasErrors()) {
+            $profile = $request->getProfile();
+            if ($profile) {
+                $profile->initProfile($request);
+            }
+        }
+    }
+
+    /**
      * Add the requirements the profile needs
      *
      * @param $request RemoteContactGetRequest
@@ -97,11 +112,11 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                 $request_data = &$request->getRequest();
 
                 // impose the profile ID restriction
-                $profile->applyRestrictions($request_data);
+                $profile->applyRestrictions($request, $request_data);
 
                 // update the 'return' fields
                 $current_return_fields = $request->getReturnFields();
-                $profile_return_fields = $profile->getReturnFields();
+                $profile_return_fields = $profile->getReturnFields($request);
                 if (empty($current_return_fields)) {
                     $request_data['return'] = $profile_return_fields;
                 } else {
@@ -136,7 +151,7 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                     $request->reply = $request->result; // set default reply to result
                 }
 
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 $request->addError($ex->getMessage());
             }
         }

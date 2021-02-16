@@ -47,7 +47,7 @@ class GetRemoteContactProfiles extends RemoteToolsRequest
                 $name_filter = '/' . $name_filter . '/';
             }
         }
-        $this->name_filter;
+        $this->name_filter = $name_filter;
     }
 
     /**
