@@ -17,7 +17,7 @@ use CRM_Remotetools_ExtensionUtil as E;
 use Civi\RemoteContact\RemoteContactGetRequest;
 use Civi\RemoteContact\GetRemoteContactProfiles;
 use Civi\RemoteContact\GetFieldsEvent;
-use Civi\RemoteToolsDispatcher;
+
 
 /**
  * RemoteContactProfile:
