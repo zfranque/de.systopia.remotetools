@@ -49,6 +49,14 @@ function civicrm_api3_remote_contact_get_self($params)
         }
     }
 
+    // check if the profile allows for get_self actions
+    $profile = $request->getProfile();
+    if ($profile) {
+        if (!$profile->isOwnDataProfile($request)) {
+            $request->addError(E::ts("Profile '%1' cannot be used for the RemoteContact.get_self action."));
+        }
+    }
+
     Civi::dispatcher()->dispatch('civi.remotecontact.get', $request);
 
     // prepare data for getsingle-style result

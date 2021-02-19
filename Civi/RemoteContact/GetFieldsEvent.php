@@ -31,6 +31,9 @@ class GetFieldsEvent extends RemoteToolsRequest
     /** @var array holds the list of the RemoteContact.get field specs */
     protected $field_specs;
 
+    /** @var \CRM_Remotetools_RemoteContactProfile caches the profile involved */
+    protected $profile = null;
+
     public function __construct($request)
     {
         parent::__construct($request);
@@ -81,9 +84,13 @@ class GetFieldsEvent extends RemoteToolsRequest
     {
         if ($this->profile === null) {
             $profile_name = $this->getRequestParameter('profile');
-            $this->profile = \CRM_Remotetools_RemoteContactProfile::getProfileByName($profile_name);
-            if (!$this->profile) {
-                $this->addError("Profile {$profile_name} not valid");
+            if (empty($profile_name)) {
+                $this->addError(E::ts("The profile could not be determined."));
+            } else {
+                $this->profile = \CRM_Remotetools_RemoteContactProfile::getProfileByName($profile_name);
+                if (!$this->profile) {
+                    $this->addError("Profile {$profile_name} not valid");
+                }
             }
         }
         return $this->profile;
@@ -98,7 +105,11 @@ class GetFieldsEvent extends RemoteToolsRequest
      */
     public static function addProfileFields($fields_collection)
     {
-        $profile = $fields_collection->getProfile();
-        $profile->addFields($fields_collection);
+        if (!$fields_collection->hasErrors()) {
+            $profile = $fields_collection->getProfile();
+            if ($profile) {
+                $profile->addFields($fields_collection);
+            }
+        }
     }
 }

@@ -66,7 +66,7 @@ class GetRemoteContactProfiles extends RemoteToolsRequest
 
     /**
      * Add a remote contact profile instance to the list
-     * @param \Civi\RemoteContact\CRM_Remotetools_RemoteContactProfile $instance
+     * @param \CRM_Remotetools_RemoteContactProfile $instance
      */
     public function addInstance($instance)
     {
@@ -102,7 +102,7 @@ class GetRemoteContactProfiles extends RemoteToolsRequest
     /**
      * Get the (first) instance matching the name
      *
-     * @return CRM_Remotetools_RemoteContactProfile
+     * @return \CRM_Remotetools_RemoteContactProfile
      */
     public function getFirstInstance()
     {

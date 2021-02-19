@@ -47,6 +47,21 @@ abstract class CRM_Remotetools_RemoteContactProfile {
         // implement this to format the results before delivery
     }
 
+    /**
+     * Is this profile suitable for the RemoteContat.get_self method?
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     * @return boolean
+     *   does this profile only return the data of the caller?
+     */
+    public function isOwnDataProfile($request)
+    {
+        // overwrite to make available to get_self
+        return false;
+    }
+
 
     /**
      * Get the list of fields to be returned.

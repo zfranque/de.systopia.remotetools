@@ -26,7 +26,7 @@ function civicrm_api3_remote_contact_getfields($params) {
     unset($params['check_permissions']);
 
     // we only support 'get' actions
-    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'get_self') {
+    if (!empty($params['action']) && $params['action'] != 'get' && $params['action'] != 'get_self' && $params['action'] != 'getsingle') {
         return civicrm_api3('Contact', 'getfields', $params);
     }
 

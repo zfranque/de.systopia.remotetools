@@ -28,6 +28,20 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
 {
 
     /**
+     * Is this profile suitable for the RemoteContat.get_self method?
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     *
+     * @return boolean
+     *   does this profile only return the data of the caller?
+     */
+    public function isOwnDataProfile($request)
+    {
+        return true;
+    }
+
+    /**
      * Initialise the profile. This is a good place to do some sanity checks
      *
      * @param $request RemoteContactGetRequest
