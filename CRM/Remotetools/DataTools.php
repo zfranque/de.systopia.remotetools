@@ -86,6 +86,8 @@ class CRM_Remotetools_DataTools {
             $sorting_spec = trim($sorting_spec);
             if (preg_match('/^([\w.]+) +(asc|desc)$/i', $sorting_spec, $match)) {
                 $sorting_tuples[] = [$match[1], $match[2]];
+            } elseif (preg_match('/^([\w.]+)$/i', $sorting_spec, $match)) {
+                $sorting_tuples[] = [$match[1], 'asc'];
             }
         }
 
