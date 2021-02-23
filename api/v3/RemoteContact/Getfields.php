@@ -41,7 +41,9 @@ function civicrm_api3_remote_contact_getfields($params) {
         'type'          => CRM_Utils_Type::T_STRING,
         'localizable'   => 0,
         'is_core_field' => false,
-        'is_required'   => (strtolower($params['action']) == 'get_self')
+        'is_required'   => (strtolower($params['action']) == 'get_self'),
+        'api.filter'    => 0,
+        'api.sort'      => 0,
     ]);
     $fields_collection->setFieldSpec('profile', [
         'name'          => 'profile',
@@ -51,13 +53,8 @@ function civicrm_api3_remote_contact_getfields($params) {
         'localizable'   => 0,
         'is_core_field' => false,
         'is_required'   => false,
-    ]);
-    $fields_collection->setFieldSpec('contact_type', [
-        'name'          => 'contact_type',
-        'type'          => CRM_Utils_Type::T_STRING,
-        'title'         => E::ts("Contact Type"),
-        'localizable'   => 0,
-        'is_core_field' => true,
+        'api.filter'    => 0,
+        'api.sort'      => 0,
     ]);
 
     // dispatch to others
