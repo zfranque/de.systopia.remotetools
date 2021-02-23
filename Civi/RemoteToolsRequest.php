@@ -135,6 +135,47 @@ class RemoteToolsRequest extends Event
     }
 
     /**
+     * Get the current sorting instructions as an array
+     *
+     * @param array $request_data
+     *   the API request. If empty, the original request will be used
+     *
+     * @return array
+     *   list of [field_name, 'ASC'|'DESC']  tuples
+     */
+    public function getSorting($request_data = null)
+    {
+        // use original request
+        if (empty($request_data) || !is_array($request_data)) {
+            $request_data = $this->original_request;
+        }
+
+        return \CRM_Remotetools_DataTools::getSortingTuples($request_data);
+    }
+
+    /**
+     * Get the current sorting instructions as an array
+     *
+     * @param array $sorting_tuples
+     *   list of [field_name, 'ASC'|'DESC']  tuples
+     *
+     * @param array $request_data
+     *   the API request. If empty, the compiled request will be used
+     *
+     */
+    public function setSorting($sorting_tuples, &$request_data = null)
+    {
+        // use original request
+        if (empty($request_data) || !is_array($request_data)) {
+            $request_data = &$this->request;
+        }
+
+        \CRM_Remotetools_DataTools::setSortingString($sorting_tuples, $request_data);
+    }
+
+
+
+    /**
      * Get a parameter from the (current) request
      *
      * @param string $name
@@ -182,9 +223,22 @@ class RemoteToolsRequest extends Event
     /**
      * Get the list of fields currently requested to be returned
      */
+    public function getOriginalReturnFields()
+    {
+        $return_string = \CRM_Utils_Array::value('return', $this->original_request, '');
+        if ($return_string) {
+            return explode(',', $return_string);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the list of fields currently requested to be returned
+     */
     public function getReturnFields()
     {
-        $return_string = \CRM_Utils_Array::value('return', $this->request, 'return');
+        $return_string = \CRM_Utils_Array::value('return', $this->request, '');
         if ($return_string) {
             return explode(',', $return_string);
         } else {

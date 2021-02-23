@@ -114,14 +114,25 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                 // impose the profile ID restriction
                 $profile->applyRestrictions($request, $request_data);
 
+                // make sure sorting works
+                $profile->adjustSorting($request);
+
                 // update the 'return' fields
-                $current_return_fields = $request->getReturnFields();
-                $profile_return_fields = $profile->getReturnFields($request);
-                if (empty($current_return_fields)) {
+                $requested_return_fields = $profile->mapExternalFields($request->getOriginalReturnFields());
+                $profile_return_fields   = $profile->getReturnFields($request);
+                if (empty($requested_return_fields)) {
                     $request_data['return'] = $profile_return_fields;
                 } else {
-                    // todo: use array_intersect? what logic to we want here?
-                    $request_data['return'] = array_unique(array_merge($return_fields, $profile_return_fields));
+                    $request_data['return'] = array_intersect($requested_return_fields, $profile_return_fields);
+                }
+
+                // make sure the sort fields are there as well
+                $sorting = $request->getSorting($request_data);
+                foreach ($sorting as $sorting_tuple) {
+                    $sorting_field = $sorting_tuple[0];
+                    if (!in_array($sorting_field, $request_data['return'])) {
+                        $request_data['return'][] = $sorting_field;
+                    }
                 }
             }
         }

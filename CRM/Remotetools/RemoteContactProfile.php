@@ -62,10 +62,31 @@ abstract class CRM_Remotetools_RemoteContactProfile {
         return false;
     }
 
+    /**
+     * Make sure that the sorting works,
+     *  e.g. by translating custom fields
+     *
+     * @param $request RemoteContactGetRequest
+     *   the request to execute
+     */
+    public function adjustSorting($request) {
+        $field_mapping = $this->getExternalToInternalFieldMapping();
+        $old_sorting_tuples = $request->getSorting();
+        $new_sorting_tuples = [];
+        foreach ($old_sorting_tuples as list($field_name, $order)) {
+            if (isset($field_mapping[$field_name])) {
+                $new_sorting_tuples[] = [$field_mapping[$field_name], $order];
+            } else {
+                $new_sorting_tuples[] = [$field_name, $order];
+            }
+        }
+
+        $request->setSorting($new_sorting_tuples);
+    }
 
     /**
-     * Get the list of fields to be returned.
-     *  This is meant to be overwritten by the profile
+     * Get the list of (internal) fields to be returned.
+     *  This can be overwritten by the profile
      *
      * @param $request RemoteContactGetRequest
      *   the request to execute
@@ -75,7 +96,7 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     public function getReturnFields($request)
     {
         // get the list of fields this profile wants/needs
-        return [];
+        return array_keys($this->getInternalToExternalFieldMapping());
     }
 
     /**
@@ -92,6 +113,78 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     public function applyRestrictions($request, &$request_data)
     {
         // implement this to apply any restrictions (e.g. contact attributes/IDs) to the request
+    }
+
+    /**
+     * Get a mapping of external field names to
+     *  the internal ones,
+     *   e.g. ['my_super_field' => 'custom_23']
+     *
+     * @return array
+     *   [external field name => internal field name]
+     */
+    public function getExternalToInternalFieldMapping()
+    {
+        return [];
+    }
+
+    /**
+     * Get a mapping of internal field names to
+     *  the internal ones,
+     *   e.g. ['custom_23' => 'my_super_field']
+     *
+     * @return array
+     *   [external field name => internal field name]
+     */
+    public function getInternalToExternalFieldMapping()
+    {
+        return array_flip($this->getExternalToInternalFieldMapping());
+    }
+
+    /**
+     * Translate the list of external field names to internal ones
+     *
+     * @param  array $field_names
+     *   list of external field names
+     *
+     * @return array
+     *   list of internal field names
+     */
+    public function mapExternalFields($field_names)
+    {
+        $internal_field_names = [];
+        $mapping = $this->getExternalToInternalFieldMapping();
+        foreach ($field_names as $field_name) {
+            if (isset($mapping[$field_name])) {
+                $internal_field_names[] = $mapping[$field_name];
+            } else {
+                $internal_field_names[] = $field_name;
+            }
+        }
+        return $internal_field_names;
+    }
+
+    /**
+     * Translate the list of internal field names to internal ones
+     *
+     * @param  array $field_names
+     *   list of internal field names
+     *
+     * @return array
+     *   list of external field names
+     */
+    public function mapInternalFields($field_names)
+    {
+        $external_field_names = [];
+        $mapping = $this->getInternalToExternalFieldMapping();
+        foreach ($field_names as $field_name) {
+            if (isset($mapping[$field_name])) {
+                $external_field_names[] = $mapping[$field_name];
+            } else {
+                $external_field_names[] = $field_name;
+            }
+        }
+        return $external_field_names;
     }
 
     /**

@@ -58,4 +58,69 @@ class CRM_Remotetools_DataTools {
 
         return $option_list;
     }
+
+    /**
+     * Get the current sorting instructions as an array
+     *
+     * @param array $request_data
+     *   the API request
+     *
+     * @return array
+     *   list of [field_name, 'ASC'|'DESC']  tuples
+     */
+    public static function getSortingTuples($request_data)
+    {
+        // extract current sorting string
+        $current_sorting_string = '';
+        if (!empty($request_data['option.sort']) && is_string($request_data['option.sort'])) {
+            $current_sorting_string = $request_data['option.sort'];
+        }
+        if (!empty($request_data['options']['sort']) && is_string($request_data['options']['sort'])) {
+            $current_sorting_string .= ',' . $request_data['options']['sort'];
+        }
+
+        // parse string
+        $sorting_tuples = [];
+        $sorting_string_chunks = explode(',', $current_sorting_string);
+        foreach ($sorting_string_chunks as $sorting_spec) {
+            $sorting_spec = trim($sorting_spec);
+            if (preg_match('/^([\w.]+) +(asc|desc)$/i', $sorting_spec, $match)) {
+                $sorting_tuples[] = [$match[1], $match[2]];
+            }
+        }
+
+        return $sorting_tuples;
+    }
+
+    /**
+     * Convert the sorting tuples into a API option.sort string
+     *
+     * @param $sorting_tuples array
+     *   list of [field_name, 'ASC'|'DESC']  tuples
+     *
+     * @param array $request_data
+     *   the API request
+     *
+     * @return string
+     */
+    public static function setSortingString($sorting_tuples, &$request_data)
+    {
+        $sorting_chunks = [];
+        foreach ($sorting_tuples as $sorting_tuple) {
+            if (!empty($sorting_tuple[0])) {
+                if (!empty($sorting_tuple[1]) && strtolower($sorting_tuple[1]) == 'desc') {
+                    $sorting_chunks[] = "{$sorting_tuple[0]} desc";
+                } else {
+                    $sorting_chunks[] = "{$sorting_tuple[0]} asc";
+                }
+            }
+        }
+
+        // set in request data
+        $sorting_string = implode(', ', $sorting_chunks);
+        unset($request_data['option.sort'], $request_data['option']['sort']); // remove for compatibility
+        if ($sorting_string) {
+            $request_data['options']['sort'] = $sorting_string;
+        }
+    }
 }
