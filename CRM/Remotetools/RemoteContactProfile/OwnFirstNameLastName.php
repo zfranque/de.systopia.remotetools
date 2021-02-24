@@ -28,6 +28,28 @@ class CRM_Remotetools_RemoteContactProfile_OwnFirstNameLastName extends CRM_Remo
 {
 
     /**
+     * Get the profile's ID
+     *
+     * @return string
+     *   profile ID
+     */
+    public function getProfileID()
+    {
+        return 'simple_first_name_last_name';
+    }
+
+    /**
+     * Get the profile's (human readable) name
+     *
+     * @return string
+     *   profile ID
+     */
+    public function getProfileName()
+    {
+        return E::ts("[Example] first and last name");
+    }
+
+    /**
      * Is this profile suitable for the RemoteContat.get_self method?
      *
      * @param $request RemoteContactGetRequest

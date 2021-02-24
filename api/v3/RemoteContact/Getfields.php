@@ -51,6 +51,7 @@ function civicrm_api3_remote_contact_getfields($params) {
         'description'   => E::ts('Defines the data you will be receiving. If omitted, the system will try to assign the a profile'),
         'type'          => CRM_Utils_Type::T_STRING,
         'localizable'   => 0,
+        'options'       => CRM_Remotetools_RemoteContactProfile::getProfileList(),
         'is_core_field' => false,
         'is_required'   => false,
         'api.filter'    => 0,

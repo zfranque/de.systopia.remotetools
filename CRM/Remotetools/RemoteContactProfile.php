@@ -26,6 +26,26 @@ use Civi\RemoteContact\GetFieldsEvent;
 abstract class CRM_Remotetools_RemoteContactProfile {
 
     /**
+     * Get the profile's ID
+     *
+     * @return string
+     *   profile ID
+     */
+    public abstract function getProfileID();
+
+    /**
+     * Get the profile's (human readable) name
+     *
+     * @return string
+     *   profile ID
+     */
+    public function getProfileName()
+    {
+        // please override
+        return $this->getProfileID();
+    }
+
+    /**
      * Add the profile's fields to the fields collection
      *
      * @param $fields_collection GetFieldsEvent
@@ -259,5 +279,24 @@ abstract class CRM_Remotetools_RemoteContactProfile {
                 $profiles->addInstance(new $class());
             }
         }
+    }
+
+    /**
+     * Get a list of all registered profiles
+     *
+     * @return array
+     *   list of profile ID => name
+     */
+    public static function getProfileList()
+    {
+        $list = [];
+
+        $profiles = self::getAvailableProfiles();
+        foreach ($profiles as $profile) {
+            /** @var $profile CRM_Remotetools_RemoteContactProfile */
+            $list[$profile->getProfileID()] = $profile->getProfileName();
+        }
+
+        return $list;
     }
 }
