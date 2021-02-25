@@ -13,32 +13,11 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-require_once 'remotetools.civix.php';
 use CRM_Remotetools_ExtensionUtil as E;
-use Civi\RemoteContact\RemoteContactGetRequest;
 
 /**
- * RemoteContact.get implementation,
- *  analogous to Contact.get, but requiring the remote_contact_id parameter
- *
- * @param array $params
- *   API call parameters
- *
- * @return array
- *   API3 response
+ * RemoteContact: exchange contact data with a remote system
  */
-function civicrm_api3_remote_contact_get($params)
-{
-    unset($params['check_permissions']);
+class CRM_Remotetools_RemoteContact {
 
-    // create Symfony execution event
-    $request = new RemoteContactGetRequest($params);
-
-    Civi::dispatcher()->dispatch('civi.remotecontact.get', $request);
-
-    if ($request->hasErrors()) {
-        return $request->createAPI3Error();
-    } else {
-        return $request->createAPI3Success('RemoteContact', 'get');
-    }
 }

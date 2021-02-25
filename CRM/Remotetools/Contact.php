@@ -16,7 +16,7 @@
 use CRM_Remotetools_ExtensionUtil as E;
 
 /**
- * RemoteContact function
+ * Tools to remotely authorize/identify contacts or users
  */
 class CRM_Remotetools_Contact {
 
