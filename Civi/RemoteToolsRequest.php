@@ -190,6 +190,69 @@ class RemoteToolsRequest extends Event
     }
 
     /**
+     * Get an API option from the (current) request
+     *
+     * @param string $name
+     *   parameter name
+     *
+     * @param boolean $json_parse
+     *   should the raw string (tried to) be parsed as json?
+     *
+     * @param string $explode_string
+     *   if not empty, a potential string will be exploded by that character before return
+     *
+     * @return mixed
+     *   the option value, or null if not set
+     */
+    public function getRequestOption($name, $json_parse = true, $explode_string = ',')
+    {
+        // get the value
+        $value = null;
+        if (isset($this->request['options'][$name])) {
+            $value = $this->request['options'][$name];
+        }
+        if (!$value && isset($this->request["option.{$name}"])) {
+            $value = $this->request["option.{$name}"];
+        }
+
+        // try to parse as JSON (if requested)
+        if (!$skip_json_parse) {
+            $parsed_value = json_decode($value, true);
+            if ($parsed_value !== null) {
+                $value = $parsed_value;
+            }
+        }
+
+        // try to explode (if requested)
+        if (is_string($value) && !empty($explode_string)) {
+            $values = explode($explode_string, $value);
+            if (count($values) > 1) {
+                $value = $values;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get an API option from the (current) request
+     *
+     * @param string $name
+     *   parameter name
+     *
+     * @param mixed $value
+     *   default return value, if not set
+     */
+    public function setRequestOption($name, $value)
+    {
+        unset($this->request['options'][$name]);
+        unset($this->request["option.{$name}"]);
+        $this->request['options'][$name] = $value;
+    }
+
+
+
+    /**
      * Get the currently compiled request for editing
      *
      * @return array
