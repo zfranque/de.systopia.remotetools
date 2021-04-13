@@ -173,7 +173,23 @@ class RemoteToolsRequest extends Event
         \CRM_Remotetools_DataTools::setSortingString($sorting_tuples, $request_data);
     }
 
-
+    /**
+     * Map the search parameters keys with the given mapping
+     * @param array $mapping
+     *   string -> string mapping
+     */
+    public function mapParameters($mapping = [])
+    {
+        foreach ($mapping as $old_key => $new_key)
+        {
+            if ($old_key != $new_key) {
+                if (isset($this->request[$old_key])) {
+                    $this->request[$new_key] = $this->request[$old_key];
+                    unset($this->request[$old_key]);
+                }
+            }
+        }
+    }
 
     /**
      * Get a parameter from the (current) request
@@ -216,7 +232,7 @@ class RemoteToolsRequest extends Event
         }
 
         // try to parse as JSON (if requested)
-        if (!$skip_json_parse) {
+        if (!$json_parse) {
             $parsed_value = json_decode($value, true);
             if ($parsed_value !== null) {
                 $value = $parsed_value;
@@ -292,7 +308,7 @@ class RemoteToolsRequest extends Event
         if ($return_string) {
             return explode(',', $return_string);
         } else {
-            return null;
+            return [];
         }
     }
 
