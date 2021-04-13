@@ -173,7 +173,23 @@ class RemoteToolsRequest extends Event
         \CRM_Remotetools_DataTools::setSortingString($sorting_tuples, $request_data);
     }
 
-
+    /**
+     * Map the search parameters keys with the given mapping
+     * @param array $mapping
+     *   string -> string mapping
+     */
+    public function mapParameters($mapping = [])
+    {
+        foreach ($mapping as $old_key => $new_key)
+        {
+            if ($old_key != $new_key) {
+                if (isset($this->request[$old_key])) {
+                    $this->request[$new_key] = $this->request[$old_key];
+                    unset($this->request[$old_key]);
+                }
+            }
+        }
+    }
 
     /**
      * Get a parameter from the (current) request
@@ -187,6 +203,153 @@ class RemoteToolsRequest extends Event
     public function getRequestParameter($name, $default = null)
     {
         return \CRM_Utils_Array::value($name, $this->request, $default);
+    }
+
+    /**
+     * Remove a parameter from the (current) request
+     *
+     * @param string $name
+     *   parameter name
+     *
+     * @param mixed $default
+     *   previous value, or null if not set
+     */
+    public function removeRequestParameter($name)
+    {
+        $old_value = \CRM_Utils_Array::value($name, $this->request);
+        unset($this->request[$name]);
+        return $old_value;
+    }
+
+    /**
+     * Get an API option from the (current) request
+     *
+     * @param string $name
+     *   parameter name
+     *
+     * @param boolean $json_parse
+     *   should the raw string (tried to) be parsed as json?
+     *
+     * @param string $explode_string
+     *   if not empty, a potential string will be exploded by that character before return
+     *
+     * @return mixed
+     *   the option value, or null if not set
+     */
+    public function getRequestOption($name, $json_parse = true, $explode_string = ',')
+    {
+        // get the value
+        $value = null;
+        if (isset($this->request['options'][$name])) {
+            $value = $this->request['options'][$name];
+        }
+        if (!$value && isset($this->request["option.{$name}"])) {
+            $value = $this->request["option.{$name}"];
+        }
+
+        // try to parse as JSON (if requested)
+        if (!$json_parse) {
+            $parsed_value = json_decode($value, true);
+            if ($parsed_value !== null) {
+                $value = $parsed_value;
+            }
+        }
+
+        // try to explode (if requested)
+        if (is_string($value) && !empty($explode_string)) {
+            $values = explode($explode_string, $value);
+            if (count($values) > 1) {
+                $value = $values;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get an API option from the (current) request
+     *
+     * @param string $name
+     *   parameter name
+     *
+     * @param mixed $value
+     *   default return value, if not set
+     */
+    public function setRequestOption($name, $value)
+    {
+        unset($this->request['options'][$name]);
+        unset($this->request["option.{$name}"]);
+        $this->request['options'][$name] = $value;
+    }
+
+    /**
+     * Get the current restriction of entity IDs
+     *
+     * Remark: this returns
+     *   null  if not set
+     *   fail  if couldn't be parsed
+     *   array with a list of entity IDs, if everything's fine
+     *
+     * @return array|null|string
+     *   list of requested IDs
+     */
+    public function getRequestedEntityIDs()
+    {
+        if (isset($this->request['id'])) {
+            $id_param = $this->request['id'];
+            if (is_string($id_param)) {
+                // this is a single integer, or a list of integers
+                $id_list = explode(',', $id_param);
+                return array_map('intval', $id_list);
+
+            } else if (is_array($id_param)) {
+                // this is an array. we can deal with the 'IN' => [] notation
+                if (count($id_param) == 2) {
+                    if (strtolower($id_param[0]) == 'in' && is_array($id_param[1])) {
+                        // this should be a list of IDs
+                        return array_map('intval', $id_param[1]);
+                    }
+                }
+            }
+
+            // if we get here, we couldn't parse it
+            \Civi::log()->debug("RemoteEntity.get: couldn't parse 'id' parameter: " . json_encode($id_param));
+            return 'fail';
+
+        } else {
+            // 'id' field not set
+            return null;
+        }
+    }
+
+    /**
+     * Restrict the query to the given entity IDs.
+     *  Existing restrictions will be taken into account (intersection)
+     *
+     * @param array $entity_ids
+     *   list of entity IDs
+     */
+    public function restrictToEntityIds($entity_ids)
+    {
+        if (empty($entity_ids)) {
+            // this basically means: restrict to empty set:
+            $this->request['id'] = 0;
+        } else {
+            $current_restriction = $this->getRequestedEntityIDs();
+            if ($current_restriction === null) {
+                // no restriction set so far
+                $this->request['id'] = ['IN' => $entity_ids];
+
+            } else if (is_array($current_restriction)) {
+                // there is a restriction -> intersect
+                $intersection = array_intersect($current_restriction, $entity_ids);
+                $this->request['id'] = ['IN' => $intersection];
+
+            } else {
+                // something's wrong here
+                \Civi::log()->debug("RemoteEntity.get: couldn't restrict 'id' parameter: " . json_encode($current_restriction));
+            }
+        }
     }
 
     /**
@@ -229,7 +392,7 @@ class RemoteToolsRequest extends Event
         if ($return_string) {
             return explode(',', $return_string);
         } else {
-            return null;
+            return [];
         }
     }
 
@@ -257,7 +420,7 @@ class RemoteToolsRequest extends Event
     }
 
     /**
-     * Add an error message to the remote event context
+     * Add an error message to the remote context
      *
      * @param string $message
      *   the error message, localised
@@ -292,7 +455,7 @@ class RemoteToolsRequest extends Event
     }
 
     /**
-     * Add a warning to the remote event context
+     * Add a warning to the remote context
      *
      * @param string $message
      *   the warning, localised
@@ -306,7 +469,7 @@ class RemoteToolsRequest extends Event
     }
 
     /**
-     * Add a warning to the remote event context
+     * Add a warning to the remote context
      *
      * @param string $message
      *   status message, localised
@@ -397,7 +560,7 @@ class RemoteToolsRequest extends Event
     }
 
     /**
-     * Generate a RemoteEvent conform API3 error
+     * Generate a RemoteEntity conform API3 error
      *
      * @param $error_message
      *

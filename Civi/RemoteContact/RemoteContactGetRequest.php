@@ -134,6 +134,9 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                         $request_data['return'][] = $sorting_field;
                     }
                 }
+
+                // finally: map the search parameters themselves:
+                $request->mapParameters($profile->getExternalToInternalFieldMapping());
             }
         }
     }
@@ -152,7 +155,7 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                 // only execute if there is a profile
                 $profile = $request->getProfile();
                 if (!$profile) {
-                    $request->addError(E::ts("Date profile not found"));
+                    $request->addError(E::ts("Data profile not found"));
 
                 } else {
                     // finally execute

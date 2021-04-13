@@ -234,7 +234,7 @@ abstract class CRM_Remotetools_RemoteContactProfile {
     public static function getAvailableProfiles()
     {
         // trigger event
-        $profile_search = new GetRemoteContactProfiles($profile_name);
+        $profile_search = new GetRemoteContactProfiles();
         Civi::dispatcher()->dispatch('civi.remotecontact.getprofiles', $profile_search);
 
         // return the first match (if any)
