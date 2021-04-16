@@ -161,8 +161,15 @@ class RemoteContactGetRequest extends RemoteToolsRequest
                     // finally execute
                     $request->result = false; // mark es being executed
                     $request_data = $request->getRequest();
+                    $log_debug = $request->getRequestParameter('log_debug');
+                    if (!empty($log_debug)) {
+                        \Civi::log()->debug("RemoteContact.get call: " . json_encode($request_data));
+                    }
                     $request->result = \civicrm_api3('Contact', 'get', $request_data);
                     $request->reply = $request->result; // set default reply to result
+                    if (!empty($log_debug)) {
+                        \Civi::log()->debug("RemoteContact.get result: " . json_encode($request->result));
+                    }
                 }
 
             } catch (\Exception $ex) {
