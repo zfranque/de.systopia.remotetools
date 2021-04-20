@@ -48,7 +48,10 @@ class CRM_Remotetools_RemoteContactQueryTools {
         $multivalue_search_or_queries = [];
         foreach ($multivalue_search_or_fields as $multivalue_search_or_field) {
             $values = (array) $request->getRequestParameter($multivalue_search_or_field);
-            if (empty($values)) continue;
+            if (empty($values) || isset($values['NOT IN'])) {
+                // both of these cases we can safely ignore
+                continue;
+            }
             if (!empty($values['IN'])) {
                 $values = (array) $values['IN'];
             }
@@ -132,7 +135,7 @@ class CRM_Remotetools_RemoteContactQueryTools {
                     $request->removeRequestParameter($external_field);
 
                 } else {
-                    $request->addWarning("Custom field [{$external_field}] is not a multi-value custom field.");
+                    $request->addStatus("Custom field [{$external_field}] is not a multi-value custom field.");
                 }
             }
         }
