@@ -194,7 +194,7 @@ class CRM_Remotetools_DataTools {
             $current_restriction = self::getIDs($request, $field_name);
             if ($current_restriction === null) {
                 // no restriction set so far
-                $request[$field_name] = ['IN' => $ids];
+                $request[$field_name] = ['IN' => (array) $ids];
 
             } else if (is_array($current_restriction)) {
                 // there is a restriction -> intersect

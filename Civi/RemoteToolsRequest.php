@@ -295,31 +295,7 @@ class RemoteToolsRequest extends Event
      */
     public function getRequestedEntityIDs()
     {
-        if (isset($this->request['id'])) {
-            $id_param = $this->request['id'];
-            if (is_string($id_param)) {
-                // this is a single integer, or a list of integers
-                $id_list = explode(',', $id_param);
-                return array_map('intval', $id_list);
-
-            } else if (is_array($id_param)) {
-                // this is an array. we can deal with the 'IN' => [] notation
-                if (count($id_param) == 2) {
-                    if (strtolower($id_param[0]) == 'in' && is_array($id_param[1])) {
-                        // this should be a list of IDs
-                        return array_map('intval', $id_param[1]);
-                    }
-                }
-            }
-
-            // if we get here, we couldn't parse it
-            \Civi::log()->debug("RemoteEntity.get: couldn't parse 'id' parameter: " . json_encode($id_param));
-            return 'fail';
-
-        } else {
-            // 'id' field not set
-            return null;
-        }
+        return \CRM_Remotetools_DataTools::getIDs($this->request, 'id');
     }
 
     /**
@@ -331,25 +307,7 @@ class RemoteToolsRequest extends Event
      */
     public function restrictToEntityIds($entity_ids)
     {
-        if (empty($entity_ids)) {
-            // this basically means: restrict to empty set:
-            $this->request['id'] = 0;
-        } else {
-            $current_restriction = $this->getRequestedEntityIDs();
-            if ($current_restriction === null) {
-                // no restriction set so far
-                $this->request['id'] = ['IN' => $entity_ids];
-
-            } else if (is_array($current_restriction)) {
-                // there is a restriction -> intersect
-                $intersection = array_intersect($current_restriction, $entity_ids);
-                $this->request['id'] = ['IN' => $intersection];
-
-            } else {
-                // something's wrong here
-                \Civi::log()->debug("RemoteEntity.get: couldn't restrict 'id' parameter: " . json_encode($current_restriction));
-            }
-        }
+        \CRM_Remotetools_DataTools::restrictToIds($this->request, $entity_ids, 'id');
     }
 
     /**
