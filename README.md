@@ -7,6 +7,7 @@ could be your website, and/or another database.
 ## Features
 
 * create a secure link between a remote system's user (e.g. Drupal user) and a CivCRM contact
+* generate and validadte customised/personalised secure tokens
 * (more to follow)
 
 ## Usage
