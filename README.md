@@ -13,6 +13,7 @@ could be your website, and/or another database.
 
 The following modules rely on this extension:
 
+* [Event Messages Extension](https://github.com/systopia/de.systopia.eventmessages)
 * [Remote Events Extension](https://github.com/systopia/de.systopia.remoteevent)
 * (more to follow) 
 
