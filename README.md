@@ -23,5 +23,9 @@ The following modules rely on this extension:
 * PHP v7.0+
 * CiviCRM 5.0
 
+## Dependencies
+
+* [CiviCRM Extended Contact Matcher](https://github.com/systopia/de.systopia.xcm)
+* [CiviCRM Contact Identity Tracker]((https://github.com/systopia/de.systopia.identitytracker))
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
